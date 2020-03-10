@@ -18,9 +18,7 @@ import org.koin.core.inject
 
 class ListViewModel : ViewModel(), KoinComponent {
     private val postInteractor: IPostInteractor by inject()
-
     val subNameTriggerLiveData: MutableLiveData<String> = MutableLiveData()
-
     private val getPostLiveData: LiveData<PagingPosts> =
         Transformations.map(subNameTriggerLiveData) { subName ->
 
@@ -53,6 +51,16 @@ class ListViewModel : ViewModel(), KoinComponent {
         }
 
     fun onLoad() {
-        subNameTriggerLiveData.value = "gaming"
+        this.subNameTriggerLiveData.value = this.postInteractor.currentSubName()
+    }
+
+    fun refresh(subName: String) {
+        // Save requesting subname for next time opening of the app
+        postInteractor.setSubName(subName = subName)
+        if (subName == subNameTriggerLiveData.value) {
+            getPostLiveData.value?.refresh?.invoke()
+        } else {
+            subNameTriggerLiveData.value = subName
+        }
     }
 }

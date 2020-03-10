@@ -11,7 +11,7 @@ import com.cat.domain.entity.State
 import com.cat.domain.entity.request.LoadPostRequest
 import com.cat.domain.interfaces.repository.IDataSource
 import com.cat.framework.network.PostBoundaryCallback
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 
@@ -75,7 +75,7 @@ class DataSource : IDataSource, KoinComponent {
         // This LiveData emit states of get post by sub name process
         val getPostBySubNameState: MutableLiveData<State> = MutableLiveData()
         // launch coroutine blocking
-        runBlocking(loadPostRequest.coroutine) {
+        CoroutineScope(loadPostRequest.coroutine).launch {
             getPostBySubNameState.postValue(State.LOADING)
             // TODO get more accurate error
             val newPosts: List<RedditPost>? =
@@ -86,12 +86,12 @@ class DataSource : IDataSource, KoinComponent {
 
             if (newPosts == null) {
                 getPostBySubNameState.postValue(State.error("Refreshing reddit posts by subname ${loadPostRequest.subName} failed!"))
-                return@runBlocking
+                return@launch
             }
 
             if (newPosts.isEmpty()) {
                 getPostBySubNameState.postValue(State.EMPTY)
-                return@runBlocking
+                return@launch
             }
 
             // 1st, Delete all posts belong to the requested sub name

@@ -6,12 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import com.cat.domain.entity.State
 import com.cat.presentation.R
 import com.cat.presentation.adapters.PostFeedAdapter
 import com.cat.presentation.viewmodel.ListViewModel
 import kotlinx.android.synthetic.main.list_fragment.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import timber.log.Timber
 
 class ListFragment : Fragment() {
     private val listViewModel: ListViewModel by viewModel()
@@ -26,6 +26,10 @@ class ListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         rl_post_list.adapter = PostFeedAdapter()
+
+        btn_go.setOnClickListener {
+            listViewModel.refresh(edt_sub_name.text.toString())
+        }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -35,7 +39,14 @@ class ListFragment : Fragment() {
         })
 
         this.listViewModel.refreshState.observe(viewLifecycleOwner, Observer {
-            Timber.d("Get state ${it.status.name}")
+            when (it) {
+                State.LOADING -> fl_loading.visibility = View.VISIBLE
+                else -> fl_loading.visibility = View.GONE
+            }
+        })
+
+        this.listViewModel.subNameTriggerLiveData.observe(viewLifecycleOwner, Observer { subName ->
+            edt_sub_name.setText(subName)
         })
 
         this.listViewModel.onLoad()
