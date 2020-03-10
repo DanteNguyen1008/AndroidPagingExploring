@@ -12,6 +12,9 @@ import com.cat.domain.entity.request.LoadPostRequest
 import com.cat.domain.interfaces.repository.IDataSource
 import com.cat.framework.network.PostBoundaryCallback
 import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 
