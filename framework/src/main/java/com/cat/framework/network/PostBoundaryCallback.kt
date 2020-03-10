@@ -4,6 +4,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.paging.PagedList
 import com.cat.domain.entity.RedditPost
 import com.cat.domain.entity.State
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlin.coroutines.CoroutineContext
 
@@ -18,7 +20,7 @@ class PostBoundaryCallback(
     val loadMoreState: MutableLiveData<State> = MutableLiveData()
 
     override fun onZeroItemsLoaded() {
-        runBlocking(this.coroutineContext) {
+        CoroutineScope(this.coroutineContext).launch {
             this@PostBoundaryCallback.loadMoreState.postValue(State.LOADING)
             val newPost: List<RedditPost>? = this@PostBoundaryCallback.onZeroLoad(
                 subName,
@@ -29,12 +31,12 @@ class PostBoundaryCallback(
                 this@PostBoundaryCallback
                     .loadMoreState
                     .postValue(State.error("Refreshing reddit posts by subname ${this@PostBoundaryCallback.subName} failed!"))
-                return@runBlocking
+                return@launch
             }
 
             if (newPost.isEmpty()) {
                 this@PostBoundaryCallback.loadMoreState.postValue(State.EMPTY)
-                return@runBlocking
+                return@launch
             }
 
             this@PostBoundaryCallback.handleResponse(subName, newPost)
@@ -43,7 +45,7 @@ class PostBoundaryCallback(
     }
 
     override fun onItemAtEndLoaded(itemAtEnd: RedditPost) {
-        runBlocking(this.coroutineContext) {
+        CoroutineScope(this.coroutineContext).launch {
             this@PostBoundaryCallback.loadMoreState.postValue(State.LOADING)
             val morePosts: List<RedditPost>? = this@PostBoundaryCallback.onLoadMore(
                 subName,
@@ -55,12 +57,12 @@ class PostBoundaryCallback(
                 this@PostBoundaryCallback
                     .loadMoreState
                     .postValue(State.error("Loading more reddit posts by subname ${this@PostBoundaryCallback.subName} failed!"))
-                return@runBlocking
+                return@launch
             }
 
             if (morePosts.isEmpty()) {
                 this@PostBoundaryCallback.loadMoreState.postValue(State.EMPTY)
-                return@runBlocking
+                return@launch
             }
 
             this@PostBoundaryCallback.handleResponse(subName, morePosts)
