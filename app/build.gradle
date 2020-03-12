@@ -59,4 +59,7 @@ dependencies {
     implementation "org.koin:koin-androidx-viewmodel:$koin_version"
 
     implementation 'com.jakewharton.timber:timber:4.7.1'
+
+    // Freshco
+    implementation 'com.facebook.fresco:fresco:2.1.0'
 }
