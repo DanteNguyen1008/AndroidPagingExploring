@@ -18,4 +18,7 @@ interface RedditPostDao {
 
     @Query("DELETE FROM reddit_post WHERE subreddit = :subName")
     fun deleteRedditPostsBySub(subName: String)
+
+    @Query("SELECT MAX(indexInResponse) + 1 FROM reddit_post WHERE subreddit = :subName")
+    fun getNextIndexInSub(subName: String) : Int
 }

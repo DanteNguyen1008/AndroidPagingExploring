@@ -16,6 +16,15 @@ class DiskDataSource : IDataSource.IDiskDataSource, KoinComponent {
         }
 
     override fun insertRedditPost(subName: String, newPosts: List<RedditPost>) {
-        this.database.redditPostDao().addRedditPosts(newPosts.map { it.toData(subName) })
+        this.database.redditPostDao().addRedditPosts(newPosts.map { domainRedditPost ->
+            domainRedditPost.toData(subName).also { dataRedditPost ->
+                dataRedditPost.indexInResponse =
+                    this.database.redditPostDao().getNextIndexInSub(subName = subName)
+            }
+        })
+    }
+
+    override fun deleteAllPostBySub(subName: String) {
+        this.database.redditPostDao().deleteRedditPostsBySub(subName = subName)
     }
 }

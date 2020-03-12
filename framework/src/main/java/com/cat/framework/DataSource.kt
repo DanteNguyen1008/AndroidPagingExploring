@@ -108,7 +108,7 @@ class DataSource : IDataSource, KoinComponent {
     }
 
     private fun deletePostBySubNameInLocalDatabase(subName: String) {
-
+        this.diskDataSource.deleteAllPostBySub(subName = subName)
     }
 
     private fun insertToLocalDatabase(subName: String, newRedditPosts: List<RedditPost>) {

@@ -6,6 +6,7 @@ import com.cat.reddithexagonal.modules.frameworkModules
 import com.cat.reddithexagonal.modules.interactorModules
 import com.cat.reddithexagonal.modules.viewModelModules
 import com.facebook.drawee.backends.pipeline.Fresco
+import com.facebook.stetho.Stetho
 import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -22,5 +23,6 @@ class HexApplication : Application() {
         }
 
         Fresco.initialize(this)
+        Stetho.initializeWithDefaults(this);
     }
 }

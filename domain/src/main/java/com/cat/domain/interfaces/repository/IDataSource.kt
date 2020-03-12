@@ -11,6 +11,7 @@ interface IDataSource {
     interface IDiskDataSource {
         fun loadPostsFromSubName(subName : String) : DataSource.Factory<Int, RedditPost>
         fun insertRedditPost(subName: String, newPosts: List<RedditPost>)
+        fun deleteAllPostBySub(subName: String)
     }
 
     interface INetworkDataSource {

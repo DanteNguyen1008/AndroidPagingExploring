@@ -46,12 +46,28 @@ class PostFeedAdapter : PagedListAdapter<RedditPost, PostFeedAdapter.ViewHolder>
     }
 
     companion object {
+        private val PAYLOAD_SCORE = Any()
         val DIFFER = object : DiffUtil.ItemCallback<RedditPost>() {
             override fun areContentsTheSame(oldItem: RedditPost, newItem: RedditPost): Boolean =
                 oldItem == newItem
 
             override fun areItemsTheSame(oldItem: RedditPost, newItem: RedditPost): Boolean =
                 oldItem.name == newItem.name
+
+            override fun getChangePayload(oldItem: RedditPost, newItem: RedditPost): Any? {
+                return if (sameExceptScore(oldItem, newItem)) {
+                    PAYLOAD_SCORE
+                } else {
+                    null
+                }
+            }
+
+            private fun sameExceptScore(oldItem: RedditPost, newItem: RedditPost): Boolean {
+                // DON'T do this copy in a real app, it is just convenient here for the demo :)
+                // because reddit randomizes scores, we want to pass it as a payload to minimize
+                // UI updates between refreshes
+                return oldItem.copy(score = newItem.score) == newItem
+            }
         }
     }
 }
